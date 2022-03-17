@@ -3,22 +3,21 @@
 import sys
 # my custom utility
 from util.util import *
-from qp_helper.qp_helper import *
-from is_helper.is_helper import *
-from idls.sp_idl.search_plan.ttypes import *
-from idls.qp_idl.query_process.ttypes import *
-from idls.is_idl.image_searcher.ttypes import *
+from nd_helper import *
+from idls.nd_idl.nsfw_detection.ttypes import *
 
+
+# type分流到helper
 class NsfwDetectServiceHandler:
 
-    def doImageSearch(self, req):
+    def doNsfwDetect(self, req):
         ndlogger.debug("Get one request")
         start = datetime.datetime.now()
 
         self._debugInfo(req)
 
         # search function
-        ret = self._doImageSearch(req)
+        ret = self._doNsfwDetect(req)
         ndlogger.debug(ret)
 
         final_end = datetime.datetime.now()
@@ -26,90 +25,60 @@ class NsfwDetectServiceHandler:
 
         return ret
 
-    # 核心操作1 _doImageSearch
-    def _doImageSearch(self, req):
+    # 核心操作1 _doNsfwDetect
+    def _doNsfwDetect(self, req):
 
         # step 1. query_process
-        ndlogger.debug("==== Step 1. QP Access         ====")
-        qp_helper = QPHelper(nd_conf, req, True)
-        qpRslt = qp_helper.QP_Access()
-        #ndlogger.debug(qpRslt)
-        ndlogger.debug("==== Step 1. QP Access Success ====")
+        # ndlogger.debug("==== Step 1. QP Access         ====")
+        #
+        # ndlogger.debug("==== Step 1. QP Access Success ====")
 
         # step 2. vector_search
-        ndlogger.debug("==== Step 2. IS Access         ====")
-        is_helper = ISHelper(nd_conf, req, qpRslt, True)
-        is_start = datetime.datetime.now()
-        isRslt = is_helper.IS_Access()
+        # ndlogger.debug("==== Step 2. IS Access         ====")
+        # nd_helper = ISHelper(nd_conf, req, qpRslt, True)
 
-        isRetStatus = ISReturnStatus.SEARCH_OK
-        isRetInfo = ISReturnInfo(0, 0, [])
-        isRetProd = ISReturnProduct([])
+        nd_start = datetime.datetime.now()
+        nd_helper = NDHelper(nd_conf, req, True)
+        detect_result = nd_helper.QP_Access()
 
-        isRslt = ISSearchResult(isRetStatus, isRetInfo, isRetProd)
+        #ndlogger.debug(qpRslt)
 
-        ndlogger.debug(isRslt)
-        is_end = datetime.datetime.now()
-        ndlogger.debug("Done search, respone time {}".format((is_end - is_start)))
+        # SResult = nd_helper.IS_Access()
+        #
+        # RespStatus = ResponseStatus.DETECT_OK
+        # RespInfo = ResponseInfo([], [])
+        #
+        # SResult = SearchResult(RespStatus, RespInfo)
+        #
+        # ndlogger.debug(SResult)
+
+        nd_end = datetime.datetime.now()
+        ndlogger.debug("Done search, respone time {}".format((nd_end - nd_start)))
         ndlogger.debug("==== Step 2. IS Access Success ====")
 
         # step 3. 拼装结果
-        ''' IS Result
-        enum ISReturnStatus{
-            SEARCH_OK,
-            ERROR_NO_COMP_ID,
-            ERROR_NO_CRAFT_ID
-        }
-        
-        struct ISReturnInfo{
-            1: required i32	       srch_img_cnt;
-            2: required i32	       srch_sample_cnt;
-            3: optional list<string> debug_info;
-        }
-        
-        struct ISReturnProduct{
-            1: required list< list<i32> > list_prods;
-        }
-        // 注: 一次查询可能包含多个检索图片
-        
-        struct ISSearchResult{
-            1: required ISReturnStatus  ret_status;
-            2: required ISReturnInfo	ret_info;
-            3: required ISReturnProduct ret_prod;
-        }
-        '''
-
-        ''' SP Result 
-        enum SPReturnStatus{
-            SEARCH_OK,
+        ''' Detect Result
+        enum ResponseStatus {
+            DETECT_OK,
             ERROR_1
         }
         
-        struct SPReturnInfo{
-            1: required i32	       srch_img_cnt;
-            2: required i32	       srch_sample_cnt;
-            3: optional list<string> debug_info;
+        struct ResponseInfo {
+            1: required list<double>    detect_result;
+            2: optional list<string>    debug_info;
         }
         
-        struct SPReturnProduct{
-            1: required list< list<i32> > list_prods;
-        }
-        
-        struct SPSearchResult{
-            1: required SPReturnStatus  ret_status;
-            2: required SPReturnInfo	  ret_info;
-            3: required SPReturnProduct ret_prod;
+        struct SearchResult {
+            1: required ResponseStatus  resp_status;
+            2: required ResponseInfo    resp_info;
         }
         '''
-        if isRslt.ret_status == ISReturnStatus.SEARCH_OK:
-            sp_status = SPReturnStatus.SEARCH_OK
-        else:
-            sp_status = SPReturnStatus.ERROR_1
-        retInfo = SPReturnInfo(isRslt.ret_info, isRslt.ret_info.srch_sample_cnt, isRslt.ret_info.debug_info)
-        retProd = SPReturnProduct(isRslt.ret_prod.list_prods)
-        srch_rslt = SPSearchResult(sp_status, retInfo, retProd)
 
-        return srch_rslt
+        nd_status = ResponseStatus.DETECT_OK
+        resp_info = ResponseInfo(detect_result, [])
+        nd_result = SearchResult(nd_status, resp_info)
+
+        return nd_result
 
     def _debugInfo(self, req):
         ndlogger.debug(req)

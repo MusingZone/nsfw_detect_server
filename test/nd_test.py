@@ -3,6 +3,10 @@
 nd_test.py
 """
 import os, sys
+
+from src.idls.nd_idl.nsfw_detection.ttypes import Request
+from src.util.util import ndlogger
+
 cur_path = os.getcwd()
 sys.path.append(cur_path+"/../src")
 
@@ -18,6 +22,10 @@ from thrift.protocol import TCompactProtocol
 
 import tensorflow as tf
 from tensorflow import keras
+import base64
+import requests
+from PIL import Image
+from io import BytesIO
 from tensorflow.keras.preprocessing.image import load_img
 
 
@@ -31,28 +39,49 @@ try:
 
     transport.open()
     ndlogger.info("Sp access");
-    '''
-    enum RequestType
-    {
-        IMAGE_SEARCH,
-        SEARCH_DEBUG
-    }
-    struct Request
-    {
-        1: required RequestType type;
-        2: required i32         comp_id;
-        3: required i32         craft_id;
-        4: required set < i32 > styles;
-        5: required list < string > img_urls;
-        6: optional map < string, string > srch_params;
-    }
-    '''
-    styles = set([1,2])
-    file_urls = []
-    file_urls.append('D:/Workspace/鉴黄/image_search_app/test1.jpg')
-    file_urls.append('D:/Workspace/鉴黄/image_search_app/test2.jpg')
 
-    imgs = load_img('test.jpg')
+    '''
+    enum RequestType {
+        NSFW_DETECT,
+        DETECT_DEBUG
+    }
+    
+    enum FileType {
+        VIDEO,
+        IMAGE,
+        AUDIO,
+        TEXT
+    }
+    
+    struct Request {
+        1: required RequestType         req_type;
+        2: required FileType            file_type;
+        3: required list<string>        file_urls;
+        4: optional map<string, string> detect_params;
+    }
+    '''
+
+    file_urls = []
+    file_urls.append('http://bpic.588ku.com/element_origin_min_pic/19/03/15/75076c485081d15ed9c224ad3e4ce4a1.jpg')
+    file_urls.append('https://cdn.pornpics.com/pics/2017-01-10/253759_12big.jpg')
+
+    detect_params = {}
+    detect_params['debug'] = "1"
+
+    '''
+
+    response = requests.get(file_urls[0])
+    # 内存中打开图片
+    image = Image.open(BytesIO(response.content))
+    # 图片的base64编码
+    ls_f = base64.b64encode(BytesIO(response.content).read())
+    # base64编码解码
+    imgdata = base64.b64decode(ls_f)
+    # 图片文件保存
+    file = open('test.jpg', 'wb')
+    file.write(imgdata)
+    file.close()
+    img = load_img('test.jpg')
     newsize = (299, 299)
     img = img.resize(newsize)
     img_array = keras.preprocessing.image.img_to_array(img)
@@ -60,12 +89,12 @@ try:
     img_array = tf.expand_dims(img_array, 0)  # Create a batch
     data = img_array.numpy()
 
-    params = {}
-    params['debug'] = "1"
+    # 构造得到请求体xxx
+    # req = {'inputs': data.tolist()}
+    # req = data.tolist()
+    '''
 
-    # 构造得到请求体
-    req = Request(0, 1, file_urls, params)
-    print("req: ", req)
+    req = Request(0, 1, file_urls, detect_params)
 
     # 执行request
     result = client.doNsfwDetect(req)

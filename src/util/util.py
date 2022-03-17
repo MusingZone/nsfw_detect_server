@@ -17,7 +17,7 @@ import datetime
 
 import yaml
 
-conf_file_path = '../conf/sp.yaml'
+conf_file_path = '../conf/nd.yaml'
 with open(conf_file_path) as nd_conf_file:
     if nd_conf_file:
         nd_conf = yaml.load(nd_conf_file.read())
