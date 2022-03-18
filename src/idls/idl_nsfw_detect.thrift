@@ -7,6 +7,7 @@
 */
 
 namespace py nsfw_detection
+namespace java com.tourjing.rpc.nsfwdetection
 
 // ========   Request  ==========
 
@@ -40,9 +41,14 @@ struct ResponseInfo {
 	2: optional list<string>    debug_info;
 }
 
+// struct ResponseProduct {
+// 	1: required list< list<i32> >   list_prods;
+// }
+
 struct SearchResult {
 	1: required ResponseStatus  resp_status;
 	2: required ResponseInfo    resp_info;
+// 	3: required ResponseProduct resp_prod;
 }
 
 // ======   Exception ==========

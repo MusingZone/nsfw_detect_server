@@ -15,8 +15,15 @@ class NsfwDetectServiceHandler:
         start = datetime.datetime.now()
 
         self._debugInfo(req)
+        ndlogger.debug("req: ", req)
 
         # search function
+
+        # 临时构造
+        nd_status = ResponseStatus.DETECT_OK
+        resp_info = ResponseInfo([1.23], ['xxxxx'])
+        # ret = SearchResult(nd_status, resp_info)
+
         ret = self._doNsfwDetect(req)
         ndlogger.debug(ret)
 
@@ -39,7 +46,7 @@ class NsfwDetectServiceHandler:
 
         nd_start = datetime.datetime.now()
         nd_helper = NDHelper(nd_conf, req, True)
-        detect_result = nd_helper.QP_Access()
+        detect_result = nd_helper.One_Predict()
 
         #ndlogger.debug(qpRslt)
 

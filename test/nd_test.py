@@ -30,7 +30,7 @@ from tensorflow.keras.preprocessing.image import load_img
 
 
 try:
-    transport = TSocket.TSocket('42.192.54.30', 8501)
+    transport = TSocket.TSocket('localhost', 9090)
     transport = TTransport.TBufferedTransport(transport)
     protocol = TCompactProtocol.TCompactProtocol(transport)
 

@@ -33,7 +33,7 @@ pfactory    = TCompactProtocol.TCompactProtocolFactory()
 
 server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
-ndlogger.info("Starting Search Plan in ip \"{}\" and port {}".format(nd_ip, nd_port))
+ndlogger.info("Starting NSFW Detect in ip \"{}\" and port {}".format(nd_ip, nd_port))
 
 server.serve()
 

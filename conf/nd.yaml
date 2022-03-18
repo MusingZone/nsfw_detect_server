@@ -3,7 +3,5 @@ sp_conf: sp_params
 # service
 services:
   nd:
-#    ip: 121.5.4.45
-    ip: '42.192.54.30'
-#    ip: localhost
-    port: 8501
+    ip: localhost
+    port: 9090
