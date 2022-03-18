@@ -4,24 +4,14 @@ import os, sys
 cur_path = os.getcwd()
 sys.path.append(cur_path + "/../")
 
-from util.util import *
 from thrift import Thrift
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TCompactProtocol
-
-from idls.nd_idl.nsfw_detection import NsfwDetectService
-from idls.nd_idl.nsfw_detection.ttypes import *
 
 import numpy as np
 import time
 import tensorflow as tf
 tf.enable_eager_execution()
 from tensorflow import keras
-import base64
 import requests
-from PIL import Image
-from io import BytesIO
 from tensorflow.keras.preprocessing.image import load_img
 
 

@@ -4,8 +4,8 @@ nd_test.py
 """
 import os, sys
 
-from src.idls.nd_idl.nsfw_detection.ttypes import Request
-from src.util.util import ndlogger
+from src.nd_idl.nsfw_detection.ttypes import Request
+from src.util import ndlogger
 
 cur_path = os.getcwd()
 sys.path.append(cur_path+"/../src")
@@ -19,15 +19,6 @@ from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TCompactProtocol
-
-import tensorflow as tf
-from tensorflow import keras
-import base64
-import requests
-from PIL import Image
-from io import BytesIO
-from tensorflow.keras.preprocessing.image import load_img
-
 
 try:
     transport = TSocket.TSocket('localhost', 9090)
@@ -69,7 +60,6 @@ try:
     detect_params['debug'] = "1"
 
     '''
-
     response = requests.get(file_urls[0])
     # 内存中打开图片
     image = Image.open(BytesIO(response.content))

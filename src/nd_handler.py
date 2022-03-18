@@ -1,10 +1,7 @@
 # coding: utf-8
 
-import sys
 # my custom utility
-from util.util import *
 from nd_helper import *
-from idls.nd_idl.nsfw_detection.ttypes import *
 
 
 # type分流到helper

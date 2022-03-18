@@ -7,12 +7,7 @@ author:
 date  :
 """
 
-import socket
-import sys
-
 #Thrift modules
-from idls.nd_idl.nsfw_detection import NsfwDetectService
-from idls.nd_idl.nsfw_detection.ttypes import *
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -20,7 +15,6 @@ from thrift.protocol import TCompactProtocol
 from thrift.server import TServer
 
 # my custom utility
-from util.util import *
 from nd_handler import NsfwDetectServiceHandler
 
 handler     = NsfwDetectServiceHandler()
