@@ -5,15 +5,15 @@ nd_test.py
 import os, sys
 
 from src.nd_idl.nsfw_detection.ttypes import Request
-from src.util import ndlogger
+from src.utils.util import ndlogger
 
 cur_path = os.getcwd()
 sys.path.append(cur_path+"/../src")
 
-from util.util import *
+from util import *
 
-from idls.nd_idl.nsfw_detection import NsfwDetectService
-from idls.nd_idl.nsfw_detection.ttypes import *
+from nd_idl.nsfw_detection import NsfwDetectService
+from nd_idl.nsfw_detection.ttypes import *
 
 from thrift import Thrift
 from thrift.transport import TSocket

@@ -8,6 +8,7 @@ date  :
 """
 
 #Thrift modules
+from nd_idl.nsfw_detection import NsfwDetectService
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -15,7 +16,9 @@ from thrift.protocol import TCompactProtocol
 from thrift.server import TServer
 
 # my custom utility
-from nd_handler import NsfwDetectServiceHandler
+from utils.util import *
+from nd_handler.nd_handler import NsfwDetectServiceHandler
+
 
 handler     = NsfwDetectServiceHandler()
 processor   = NsfwDetectService.Processor(handler)

@@ -1,7 +1,11 @@
 # coding: utf-8
 
+import sys
 # my custom utility
-from nd_helper import *
+from utils.util import *
+from nd_helper.nd_image_helper import *
+from nd_helper.nd_video_helper import *
+from nd_idl.nsfw_detection.ttypes import *
 
 
 # type分流到helper
@@ -17,8 +21,8 @@ class NsfwDetectServiceHandler:
         # search function
 
         # 临时构造
-        nd_status = ResponseStatus.DETECT_OK
-        resp_info = ResponseInfo([1.23], ['xxxxx'])
+        # nd_status = ResponseStatus.DETECT_OK
+        # resp_info = ResponseInfo([1.23], ['xxxxx'])
         # ret = SearchResult(nd_status, resp_info)
 
         ret = self._doNsfwDetect(req)
@@ -42,19 +46,21 @@ class NsfwDetectServiceHandler:
         # nd_helper = ISHelper(nd_conf, req, qpRslt, True)
 
         nd_start = datetime.datetime.now()
-        nd_helper = NDHelper(nd_conf, req, True)
-        detect_result = nd_helper.One_Predict()
 
-        #ndlogger.debug(qpRslt)
+        # 图像
+        if (req.file_type == 0):
 
-        # SResult = nd_helper.IS_Access()
-        #
-        # RespStatus = ResponseStatus.DETECT_OK
-        # RespInfo = ResponseInfo([], [])
-        #
-        # SResult = SearchResult(RespStatus, RespInfo)
-        #
-        # ndlogger.debug(SResult)
+            nd_video_helper = NDVideoHelper(nd_conf, req, True)
+
+            detect_result = nd_video_helper.One_Predict()
+
+        elif (req.file_type == 1):
+
+            nd_image_helper = NDImageHelper(nd_conf, req, True)
+
+            detect_result = nd_image_helper.One_Predict()
+
+
 
         nd_end = datetime.datetime.now()
         ndlogger.debug("Done search, respone time {}".format((nd_end - nd_start)))

@@ -6,7 +6,8 @@ sys.path.append(cur_path+"/../")
 
 ndlogger = logging.getLogger('search_plan')
 ndlogger.setLevel(logging.DEBUG)
-# 写入到控制台ch = logging.StreamHandler()
+# 写入到控制台
+ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s-%(filename)s-%(lineno)d:    %(message)s')
 ch.setFormatter(formatter)
