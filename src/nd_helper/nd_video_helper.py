@@ -100,21 +100,28 @@ class NDVideoHelper:
                     # params = {'inputs': img_list}
                     params = {'inputs': data.tolist()}
                     t = time.time()
+
+                    requests.adapters.DEFAULT_RETRIES = 5
                     s = requests.session()
                     s.keep_alive = False
                     res = s.post(url, json=params)
                     result = res.json()
+                    s.close()
+
                     predictions = np.array(result['outputs'])
                     ndlogger.warning("predictions: {}".format(result))
                     y_pred = np.argmax(predictions, axis=1)
                     ndlogger.warning("y_pred: {}".format(y_pred))
 
-            # if y_pred == 0:
-            #     safe.append(i)
-            # else:
-            #     unsafe.append(i)
+                    if y_pred == 0:
+                        safe.append(i)
+                    else:
+                        unsafe.append(i)
 
-            detect_result = [round(len(safe) / floor(clip.duration / sampling_density), 2)]
+            safe_roportion = round(len(safe) / floor(clip.duration / sampling_density), 2)
+            detect_result = [safe_roportion]
+            if safe_roportion < 0.98:
+                ndlogger.warning("NSFW!!!NSFW!!!NSFW!!!NSFW!!!NSFW!!!NSFW!!!")
 
 
         except Thrift.TException as ex:
